@@ -29,4 +29,43 @@ assign spi_channel = 4'bzzzz;
 
 assign led = 8'b0;
 
+wire [7:0] tx_data;
+wire new_tx_data;
+wire tx_busy;
+wire [7:0] rx_data;
+wire new_rx_data;
+ 
+avr_interface avr_interface (
+    .clk(clk),
+    .rst(rst),
+    .cclk(cclk),
+    .spi_miso(spi_miso),
+    .spi_mosi(spi_mosi),
+    .spi_sck(spi_sck),
+    .spi_ss(spi_ss),
+    .spi_channel(spi_channel),
+    .tx(avr_rx), // FPGA tx goes to AVR rx
+    .rx(avr_tx),
+    .channel(4'd15), // invalid channel disables the ADC
+    .new_sample(),
+    .sample(),
+    .sample_channel(),
+    .tx_data(tx_data),
+    .new_tx_data(new_tx_data),
+    .tx_busy(tx_busy),
+    .tx_block(avr_rx_busy),
+    .rx_data(rx_data),
+    .new_rx_data(new_rx_data)
+    );
+
+message_printer helloWorldPrinter (
+    .clk(clk),
+    .rst(rst),
+    .tx_data(tx_data),
+    .new_tx_data(new_tx_data),
+    .tx_busy(tx_busy),
+    .rx_data(rx_data),
+    .new_rx_data(new_rx_data)
+    );
+
 endmodule
